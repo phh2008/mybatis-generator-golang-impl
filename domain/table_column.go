@@ -6,6 +6,8 @@ type Column struct {
 	Comment  string `gorm:"column:COLUMN_COMMENT"`
 	Key      string `gorm:"column:COLUMN_KEY"`
 	Extra    string `gorm:"column:EXTRA"`
+	JavaType string `gorm:"-"`
+	JavaName string `gorm:"-"`
 }
 
 func (Column) TableName() string {

@@ -220,6 +220,19 @@ body {
     margin-bottom: 15px;
     background: #fff;
     padding-top: 20px;
+    overflow: auto;
+    font-size: 14px;
+}
+
+.item .layui-input {
+    line-height: 30px;
+    height: 30px;
+    margin: 5px 0px;
+}
+
+.item .layui-btn {
+    height: 30px;
+    line-height: 30px;
 }
 
 .lay-blog .container .item .item-box {

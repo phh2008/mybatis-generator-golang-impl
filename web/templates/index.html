@@ -2,22 +2,145 @@
     <div class="container">
         <div class="contar-wrap">
             <h4 class="item-title">
-                <p><i class="layui-icon layui-icon-speaker"></i>公告：<span>欢迎！</span></p>
+                <p><i class="layui-icon layui-icon-speaker"></i><span>欢迎！</span></p>
             </h4>
             <div class="item">
-                <form class="layui-form">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">表名:</label>
-                        <div class="layui-input-inline" style="width: 200px;">
-                            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                <fieldset class="layui-elem-field">
+                    <legend style="font-size: 14px;font-weight: bold;">数据库连接</legend>
+                    <div class="layui-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">主机:</label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" lay-verify="required" name="url" value="127.0.0.1:3306"
+                                       placeholder="ip:port"
+                                       autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">数据库:</label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" lay-verify="required" name="db" placeholder="数据库名称"
+                                       autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户名:</label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" lay-verify="required" name="username" value="root" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">密码:</label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" lay-verify="required" name="password" value="root" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" lay-submit lay-filter="connect">连接</button>
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn" lay-submit lay-filter="query">查询</button>
-                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </fieldset>
+                <fieldset class="layui-elem-field">
+                    <legend style="font-size: 14px;font-weight: bold;">模版设置</legend>
+                    <div>
+                        <form class="layui-form" id="genForm">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">author:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="text" lay-verify="required" name="author" placeholder="作者"
+                                           autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">生成模块名:</label>
+                                <div class="layui-input-inline">
+                                    <input type="checkbox" name="module" lay-skin="switch">
+                                </div>
+                                <div class="layui-inline" style="color: grey;height:35px;line-height: 35px;">
+                                    (表名前辍为模块名)
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">实体包名:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="text" lay-verify="required|pkg" name="doPkg" placeholder="com.phh.do"
+                                           autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">实体父类:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="text" lay-verify="required|clazz" name="doParentClass"
+                                           placeholder="com.phh.do.BaseDO"
+                                           autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">dao包名:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="text" lay-verify="required|pkg" name="daoPkg" placeholder="com.phh.dao"
+                                           autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">dao父类:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="text" lay-verify="required|clazz" name="daoParentClass"
+                                           placeholder="com.phh.dao.BaseDAO"
+                                           autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">service包名:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="text" lay-verify="required|pkg" name="servicePkg"
+                                           placeholder="com.phh.service"
+                                           autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">service父类:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="text" lay-verify="required|clazz" name="serviceParentClass"
+                                           placeholder="com.phh.service.BaseService"
+                                           autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button id="btnCommit" class="layui-btn" lay-submit lay-filter="commit"
+                                        style="display: none;"></button>
+                            </div>
+                        </form>
                     </div>
-                </form>
-                <table id="gen" lay-filter="gen"></table>
+                </fieldset>
+                <fieldset class="layui-elem-field">
+                    <legend style="font-size: 14px;font-weight: bold;">选择表格</legend>
+                    <form class="layui-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">表名:</label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" lay-submit lay-filter="query">查询</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            <button type="button" class="layui-btn layui-btn-normal" id="commit">提交</button>
+                        </div>
+                    </form>
+                    <table id="gen" lay-filter="gen"></table>
+                </fieldset>
             </div>
         </div>
     </div>

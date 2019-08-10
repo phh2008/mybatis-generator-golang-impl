@@ -2,7 +2,7 @@ package dao
 
 import (
 	"com.phh/generator/domain"
-	"github.com/jinzhu/gorm"
+	"com.phh/generator/utils/dbutil"
 )
 
 //mapper
@@ -15,18 +15,17 @@ type GeneratorDao interface {
 	GetTableColumnsByTableName(tableName string) []domain.Column
 }
 
-func NewGeneratorDao(db *gorm.DB) GeneratorDao {
-	return &generatorDaoMapper{db: db}
+func NewGeneratorDao() GeneratorDao {
+	return &generatorDaoMapper{}
 }
 
 type generatorDaoMapper struct {
-	//数据源
-	db *gorm.DB
 }
 
 func (g *generatorDaoMapper) QueryTableList(name string) []domain.TableName {
 	var list []domain.TableName
-	db := g.db.Select("TABLE_NAME,TABLE_COMMENT,CREATE_TIME").
+	db := dbutil.Db
+	db = db.Select("TABLE_NAME,TABLE_COMMENT,CREATE_TIME").
 		Where("table_schema = (SELECT DATABASE())")
 	if name != "" {
 		db = db.Where("table_name LIKE ?", "%"+name+"%")
@@ -37,7 +36,8 @@ func (g *generatorDaoMapper) QueryTableList(name string) []domain.TableName {
 
 func (g *generatorDaoMapper) GetTableByTableName(tableName string) domain.TableName {
 	var table domain.TableName
-	g.db.Select("TABLE_NAME,TABLE_COMMENT,CREATE_TIME").
+	db := dbutil.Db
+	db.Select("TABLE_NAME,TABLE_COMMENT,CREATE_TIME").
 		Where("table_schema = (SELECT DATABASE()) AND table_name=?", tableName).
 		Find(&table)
 	return table
@@ -45,8 +45,10 @@ func (g *generatorDaoMapper) GetTableByTableName(tableName string) domain.TableN
 
 func (g *generatorDaoMapper) GetTableColumnsByTableName(tableName string) []domain.Column {
 	var list []domain.Column
-	g.db.Select("COLUMN_NAME,DATA_TYPE,COLUMN_COMMENT,COLUMN_KEY,EXTRA").
+	db := dbutil.Db
+	db.Select("COLUMN_NAME,DATA_TYPE,COLUMN_COMMENT,COLUMN_KEY,EXTRA").
 		Where("table_name = ? AND table_schema = (SELECT DATABASE())", tableName).
+		Order("ordinal_position").
 		Find(&list)
 	return list
 }

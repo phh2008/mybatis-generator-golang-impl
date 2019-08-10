@@ -5,9 +5,7 @@ import (
 	"com.phh/generator/dao"
 	"com.phh/generator/service"
 	"com.phh/generator/web/controller"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/context"
 	"github.com/kataras/iris/middleware/recover"
@@ -18,19 +16,6 @@ import (
 func main() {
 	//加载配置
 	cfg := config.Cfg()
-	//加载数据库配置
-	var
-	(
-		db  *gorm.DB
-		err error
-	)
-	db, err = gorm.Open("mysql", "root:root@/demo?charset=utf8&parseTime=True&loc=Local")
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
-	db.SingularTable(true)
-	db.LogMode(true)
 	//创建iris服务
 	app := iris.New()
 	app.Logger().SetLevel("debug")
@@ -54,7 +39,7 @@ func main() {
 		ctx.View("shared/error.html")
 	})
 
-	dao := dao.NewGeneratorDao(db)
+	dao := dao.NewGeneratorDao()
 	service := service.NewGeneratorService(dao)
 
 	//root context-path

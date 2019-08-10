@@ -1,0 +1,39 @@
+package {{.gen.DoPkg}};
+
+import java.io.Serializable;
+import java.util.Date;
+import java.math.BigDecimal;
+
+
+/**
+ * {{.table.Comment}}
+ * 表名：{{.table.Name}}
+ * @author {{.gen.Author}}
+ * @date {{.date}}
+ */
+public class {{.javaName}}DO implements Serializable {
+	private static final long serialVersionUID = {{.serialVersionUID}}L;
+
+{{range $i,$v := .columns}}
+    /**
+     * {{$v.Comment}}
+     */
+    private {{$v.JavaType}} {{$v.JavaName}};
+{{end}}
+
+{{range $i,$v := .columns}}
+    /**
+     * {{$v.Comment}}
+     */
+    public void set{{$v.JavaName|FirstToUpper}}({{$v.JavaType}} {{$v.JavaName}}) {
+        this.{{$v.JavaName}} = {{$v.JavaName}};
+    }
+    /**
+     * {{$v.Comment}}
+     */
+    public {{$v.JavaType}} get{{$v.JavaName|FirstToUpper}}() {
+        return {{$v.JavaName}};
+    }
+{{end}}
+
+}
