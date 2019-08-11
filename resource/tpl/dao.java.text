@@ -1,0 +1,14 @@
+package {{.gen.DaoPkg}}{{if .hasModule}}.{{.mod}}{{end}};
+
+import {{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}};
+import {{.gen.DaoParentClass}};
+
+/**
+ * {{.table.Comment}}
+ *
+ * @author {{.gen.Author}}
+ * @date {{.date}}
+ */
+public interface {{.javaName}}DAO extends {{.gen.DaoParentClass|ClassName}}<{{.javaName}}{{.gen.DoSuffix}}> {
+
+}

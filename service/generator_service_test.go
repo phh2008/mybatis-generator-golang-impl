@@ -4,6 +4,7 @@ import (
 	"com.phh/generator/utils/strutil"
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 	"text/template"
 )
@@ -53,4 +54,18 @@ func Test_tpl_mapper_java(t *testing.T) {
 		panic(err)
 	}
 	tpl.Execute(os.Stdout, dataMap)
+}
+
+func Test_getFiles(t *testing.T) {
+	var files []string
+	filepath.Walk("../resource/tpl/", func(path string, info os.FileInfo, err error) error {
+		if info == nil {
+			return err
+		}
+		if !info.IsDir() {
+			files = append(files, info.Name())
+		}
+		return nil
+	})
+	fmt.Println(files)
 }

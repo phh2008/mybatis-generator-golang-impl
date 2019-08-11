@@ -1,0 +1,18 @@
+package {{.gen.ServicePkg}}{{if .hasModule}}.{{.mod}}{{end}};
+
+import org.springframework.stereotype.Service;
+
+import {{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}};
+import {{.gen.DaoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DaoSuffix}};
+import {{.gen.ServiceParentClass}};
+
+/**
+ * {{.table.Comment}}
+ *
+ * @author {{.gen.Author}}
+ * @date {{.date}}
+ */
+@Service
+public class {{.javaName}}Service extends {{.gen.ServiceParentClass|ClassName}}<{{.javaName}}{{.gen.DaoSuffix}},{{.javaName}}{{.gen.DoSuffix}}> {
+
+}
