@@ -9,6 +9,7 @@ import (
 	"com.phh/generator/utils/strutil"
 	"com.phh/generator/vo"
 	"fmt"
+	"github.com/kataras/iris/core/errors"
 	"github.com/rs/zerolog/log"
 	"os"
 	"strings"
@@ -21,7 +22,7 @@ type GeneratorService interface {
 	QueryTableList(name string) []domain.TableName
 
 	//生成代码模版文件
-	Generate(gen vo.Gen) error
+	Generate(gen vo.Gen) (filePath string, err error)
 }
 
 func NewGeneratorService(dao dao.GeneratorDao) GeneratorService {
@@ -40,7 +41,7 @@ func (g *generatorService) QueryTableList(name string) []domain.TableName {
 }
 
 //生成代码模版文件
-func (g *generatorService) Generate(gen vo.Gen) error {
+func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 	setDefaulSuffix(&gen)
 	//模版函数
 	funcMap := getFuncMap()
@@ -49,7 +50,7 @@ func (g *generatorService) Generate(gen vo.Gen) error {
 	if err != nil {
 		fmt.Println(err)
 		log.Error().Msg(TEMPLATE_NOT_FOUND.Error())
-		return TEMPLATE_NOT_FOUND
+		return "", TEMPLATE_NOT_FOUND
 	}
 	var filePaths []string
 	for _, v := range files {
@@ -58,7 +59,7 @@ func (g *generatorService) Generate(gen vo.Gen) error {
 	tmpl, err := template.New("mybatisTmpl").Funcs(funcMap).ParseFiles(filePaths...)
 	if err != nil {
 		log.Error().Msg(TEMPLATE_LOAD_ERROR.Error())
-		return TEMPLATE_LOAD_ERROR
+		return "", TEMPLATE_LOAD_ERROR
 	}
 	date := dateutil.FormatTime(time.Now(), "yyyy-MM-dd")
 	//模版参数
@@ -66,6 +67,8 @@ func (g *generatorService) Generate(gen vo.Gen) error {
 	dataMap["gen"] = gen
 	dataMap["date"] = date
 	dataMap["primaryKeyName"] = "id" //主键实体映射统一为：id
+	//生成文件根目录
+	rootDir := "./mybatis_tmpl/"
 	for _, tableName := range gen.Tables {
 		columns := g.genDao.GetTableColumnsByTableName(tableName)
 		dataMap["hasDate"] = false
@@ -124,7 +127,6 @@ func (g *generatorService) Generate(gen vo.Gen) error {
 		dataMap["javaName"] = javaName
 		dataMap["serialVersionUID"] = time.Now().UnixNano()
 		//生成文件
-		rootDir := "./mybatis_tmpl/"
 		modPath := ""
 		if mod != "" {
 			modPath = mod + "/"
@@ -157,18 +159,26 @@ func (g *generatorService) Generate(gen vo.Gen) error {
 			file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0777)
 			if err != nil {
 				fmt.Println(err)
-				return FILE_OPEN_ERROR
+				return "", FILE_OPEN_ERROR
 			}
 			err = tmpl.ExecuteTemplate(file, v, dataMap)
 			if err != nil {
 				fmt.Println(err)
-				return TEMPLATE_RENDER_ERROR
+				return "", TEMPLATE_RENDER_ERROR
 			}
 		}
-		//打包zip
 	}
-
-	return nil
+	//打包zip
+	fileName := "./mybatis-tmpl-out.zip"
+	zipFile, err := os.Create(fileName)
+	fmt.Println(err)
+	defer zipFile.Close()
+	err = fileutil.Zip(rootDir, zipFile)
+	if err != nil {
+		fmt.Println(err)
+		return "", errors.New(fmt.Sprintf("生成文件成功，但打包zip失败，可在目录(%s)找到文件", rootDir))
+	}
+	return fileName, nil
 }
 
 func setDefaulSuffix(gen *vo.Gen) {

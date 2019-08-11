@@ -9,6 +9,9 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
+	"io"
+	"io/ioutil"
+	"os"
 )
 
 type IndexController struct {
@@ -88,12 +91,27 @@ func (c *IndexController) PostConnect() {
 func (c *IndexController) PostGen() {
 	var gen vo.Gen
 	c.Ctx.ReadJSON(&gen)
-	err := c.GeneratorService.Generate(gen)
+	filePath, err := c.GeneratorService.Generate(gen)
 	code := "0000"
 	msg := ""
 	if err != nil {
 		code = "0001"
 		msg = err.Error()
 	}
-	c.Ctx.JSON(iris.Map{"code": code, "msg": msg})
+	c.Ctx.JSON(iris.Map{"code": code, "msg": msg, "data": filePath})
+}
+
+//下载文件
+func (c *IndexController) GetDownload() {
+	file := c.Ctx.FormValue("file")
+	f, err := os.Open(file)
+	if err != nil {
+		c.Ctx.WriteString("获取文件错误")
+		return
+	}
+	c.Ctx.StreamWriter(func(w io.Writer) bool {
+		bt, _ := ioutil.ReadAll(f)
+		w.Write(bt)
+		return false
+	})
 }

@@ -65,7 +65,7 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
             return e.Name;
         });
         let params = JSON.stringify(request);
-        console.log(params);
+        //console.log(params);
 
         layer.msg('提交中', {icon: 16, shade: 0.01});
         $.ajax({
@@ -78,8 +78,10 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
                 layer.closeAll();
                 if (res.code === "0000") {
                     layer.msg("success");
+                    let url = ctxPath + "/download?file=" + res.data;
+                    $('#downFileIframe').attr('src', url);
                 } else {
-                    layer.msg(res.msg, {icon: 5});
+                    layer.msg(res.msg, {icon: 5, time: 10000});
                 }
             },
             error: function () {
