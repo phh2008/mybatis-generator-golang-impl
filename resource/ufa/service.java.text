@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import {{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}};
 import {{.gen.DaoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DaoSuffix}};
-{{- if .hasServiceInterface}}{{.gen.ServicePkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.ServiceSuffix}}{{end}}
+{{if .hasServiceInterface}}import {{.gen.ServicePkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.ServiceSuffix}}{{end}}
 import {{.gen.ServiceParentClass}};
 
 /**
