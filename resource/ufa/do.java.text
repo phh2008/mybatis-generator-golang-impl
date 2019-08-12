@@ -14,15 +14,15 @@ import {{.gen.DoParentClass}};
 public class {{.javaName}}{{.gen.DoSuffix}} extends {{.gen.DoParentClass|ClassName}} {
 	private static final long serialVersionUID = {{.serialVersionUID}}L;
 {{range $i,$v := .columns}}
-    {{- if ne $v.Key `PRI`}}
+    {{- if and (ne $v.Key `PRI`) (NotIn $v.Name `sn,state,valid,createId,createDate,modifyId,modifyDate` `,`)}}
     /**
      * {{$v.Comment}}
      */
     private {{$v.JavaType}} {{$v.JavaName}};
-    {{- end}}
+    {{- end -}}
 {{end}}
 {{range $i,$v := .columns}}
-    {{- if ne $v.Key `PRI`}}
+    {{- if and (ne $v.Key `PRI`) (NotIn $v.Name `sn,state,valid,createId,createDate,modifyId,modifyDate` `,`)}}
     /**
      * {{$v.Comment}}
      */
@@ -35,7 +35,7 @@ public class {{.javaName}}{{.gen.DoSuffix}} extends {{.gen.DoParentClass|ClassNa
     public {{$v.JavaType}} get{{$v.JavaName|FirstToUpper}}() {
         return {{$v.JavaName}};
     }
-    {{- end}}
+    {{- end -}}
 {{end}}
 
 }

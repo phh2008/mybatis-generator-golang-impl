@@ -236,5 +236,23 @@ func getFuncMap() template.FuncMap {
 		"Minus": func(a int, b int) int {
 			return a - b
 		},
+		"In": func(src string, des string, sep string) bool {
+			list := strings.Split(des, sep)
+			for _, v := range list {
+				if v == src {
+					return true
+				}
+			}
+			return false
+		},
+		"NotIn": func(src string, des string, sep string) bool {
+			list := strings.Split(des, sep)
+			for _, v := range list {
+				if v == src {
+					return false
+				}
+			}
+			return true
+		},
 	}
 }
