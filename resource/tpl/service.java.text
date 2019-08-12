@@ -13,6 +13,6 @@ import {{.gen.ServiceParentClass}};
  * @date {{.date}}
  */
 @Service
-public class {{.javaName}}Service{{if .hasServiceInterface}}Impl{{end}} extends {{.gen.ServiceParentClass|ClassName}}<{{.javaName}}{{.gen.DaoSuffix}},{{.javaName}}{{.gen.DoSuffix}}> {
+public class {{.javaName}}{{.gen.ServiceSuffix}}{{if .hasServiceInterface}}Impl{{end}} extends {{.gen.ServiceParentClass|ClassName}}<{{.javaName}}{{.gen.DaoSuffix}},{{.javaName}}{{.gen.DoSuffix}}> {
 
 }

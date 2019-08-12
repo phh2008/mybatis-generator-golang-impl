@@ -10,6 +10,6 @@ import {{.gen.ServiceInterfaceParentClass}};
  * @author {{.gen.Author}}
  * @date {{.date}}
  */
-public interface {{.javaName}}Service extends {{.gen.ServiceInterfaceParentClass|ClassName}}<{{.javaName}}{{.gen.DoSuffix}}> {
+public interface {{.javaName}}{{.gen.ServiceSuffix}} extends {{.gen.ServiceInterfaceParentClass|ClassName}}<{{.javaName}}{{.gen.DoSuffix}}> {
 
 }

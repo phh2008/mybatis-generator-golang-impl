@@ -9,6 +9,6 @@ import {{.gen.DaoParentClass}};
  * @author {{.gen.Author}}
  * @date {{.date}}
  */
-public interface {{.javaName}}DAO extends {{.gen.DaoParentClass|ClassName}}<{{.javaName}}{{.gen.DoSuffix}}> {
+public interface {{.javaName}}{{.gen.DaoSuffix}} extends {{.gen.DaoParentClass|ClassName}}<{{.javaName}}{{.gen.DoSuffix}}> {
 
 }
