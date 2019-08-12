@@ -27,6 +27,14 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
         }
     });
 
+    form.on('switch(chkHasServiceInterface)', function (data) {
+        if (data.elem.checked) {
+            $('#hasServiceInterfaceDiv').show();
+        } else {
+            $('#hasServiceInterfaceDiv').hide();
+        }
+    });
+
     form.on('submit(query)', function (data) {
         table.reload('gen', {
             where: data.field

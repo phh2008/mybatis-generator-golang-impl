@@ -235,6 +235,10 @@ body {
     line-height: 30px;
 }
 
+#patternConfig .layui-form-label{
+    width: 110px;
+}
+
 .lay-blog .container .item .item-box {
     padding: 0 35px 24px;
     font-size: 14px;
