@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="{{.gen.DaoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DaoSuffix}}">
     <cache eviction="LRU" type="com.ufa.framework.core.mybatis.cache.MybatisRedisCache" />
+
     <resultMap id="BaseResultMap" type="{{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}}">
        {{- range $i,$v := .columns}}
         {{- if eq $v.Key `PRI`}}
