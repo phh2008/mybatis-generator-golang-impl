@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="{{.gen.DaoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DaoSuffix}}">
-
+    <cache eviction="LRU" type="com.ufa.framework.core.mybatis.cache.MybatisRedisCache" />
     <resultMap id="BaseResultMap" type="{{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}}">
        {{- range $i,$v := .columns}}
         {{- if eq $v.Key `PRI`}}
@@ -16,19 +16,8 @@
         {{range $i,$v := .columns}} {{$v.Name}}{{if lt $i (Minus $.columnNumber 1)}},{{end}}{{end}}
     </sql>
 
-    <select id="getById" parameterType="java.lang.{{.primaryKeyJavaType}}" resultMap="BaseResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM {{.table.Name}}
-        WHERE {{.primaryKeyColumn}} = {{`#{`}}{{.primaryKeyName}},jdbcType={{.primaryKeyJdbcType|ToUpper}}{{`}`}}
-    </select>
-
-    <delete id="deleteById" parameterType="java.lang.{{.primaryKeyJavaType}}">
-        DELETE FROM {{.table.Name}} WHERE {{.primaryKeyColumn}} = {{`#{`}}{{.primaryKeyName}},jdbcType={{.primaryKeyJdbcType|ToUpper}}{{`}`}}
-    </delete>
-
-    <insert id="insert" parameterType="{{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}}" useGeneratedKeys="true" keyProperty="{{.primaryKeyName}}">
-        INSERT INTO {{.table.Name}} ({{range $i,$v := .columns}} {{$v.Name}},{{end}})
+    <insert id="insert" parameterType="{{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}}" useGeneratedKeys="true" keyProperty="{{.primaryKeyName}}" flushCache="true">
+        INSERT INTO {{.table.Name}} ({{range $i,$v := .columns}} {{$v.Name}}{{if lt $i (Minus $.columnNumber 1)}},{{end}}{{end}})
         VALUES (
         {{- range $i,$v := .columns -}}
             {{- if eq $v.Key `PRI` -}}
@@ -39,18 +28,56 @@
         {{- end}})
     </insert>
 
-    <update id="update" parameterType="{{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}}">
+    <delete id="delete" parameterType="java.lang.{{.primaryKeyJavaType}}" flushCache="true">
+        DELETE FROM {{.table.Name}} WHERE {{.primaryKeyColumn}} = {{`#{`}}{{.primaryKeyName}},jdbcType={{.primaryKeyJdbcType|ToUpper}}{{`}`}}
+    </delete>
+
+    <update id="update" parameterType="{{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}}" flushCache="true">
         UPDATE {{.table.Name}}
         <set>
           {{- range $i,$v := .columns}}
             {{- if ne $v.Key `PRI`}}
-            <if test="{{$v.Name}} != null">
-                {{$v.Name}} = {{`#{`}}{{$v.Name}},jdbcType={{$v.DataType|ToUpper}}{{`}`}},
+            <if test="{{$v.JavaName}} != null">
+                {{$v.Name}} = {{`#{`}}{{$v.JavaName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}},
             </if>
             {{- end -}}
           {{end}}
         </set>
         WHERE {{.primaryKeyColumn}} = {{`#{`}}{{.primaryKeyName}},jdbcType={{.primaryKeyJdbcType|ToUpper}}{{`}`}}
     </update>
+
+    <select id="getById" parameterType="java.lang.{{.primaryKeyJavaType}}" resultMap="BaseResultMap" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM {{.table.Name}}
+        WHERE {{.primaryKeyColumn}} = {{`#{`}}{{.primaryKeyName}},jdbcType={{.primaryKeyJdbcType|ToUpper}}{{`}`}}
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap" useCache="true">
+        SELECT <include refid="Base_Column_List" /> FROM {{.table.Name}}
+    </select>
+
+    <select id="query" parameterType="map" resultMap="BaseResultMap" useCache="true">
+        SELECT <include refid="Base_Column_List" /> FROM {{.table.Name}}
+        <where>
+        {{- range $i,$v := .columns}}
+            <if test="{{$v.JavaName}} != null {{if eq $v.JavaType `String`}}and {{$v.JavaName}} != ''{{end}} ">
+                AND {{$v.Name}} = {{`#{`}}{{$v.JavaName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}}
+            </if>
+        {{- end}}
+        </where>
+    </select>
+
+    <select id="queryPage" parameterType="map" resultMap="BaseResultMap" useCache="true">
+        SELECT <include refid="Base_Column_List" /> FROM {{.table.Name}}
+        <where>
+            <if test="whereSql != null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql != null">
+            ORDER BY ${orderBySql}
+        </if>
+    </select>
 
 </mapper>
