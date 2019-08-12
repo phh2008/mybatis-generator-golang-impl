@@ -62,19 +62,20 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 		return "", TEMPLATE_LOAD_ERROR
 	}
 	date := dateutil.FormatTime(time.Now(), "yyyy-MM-dd")
-	//模版参数
-	dataMap := map[string]interface{}{}
-	dataMap["gen"] = gen
-	dataMap["date"] = date
-	dataMap["primaryKeyName"] = "id" //主键实体映射统一为：id
-	hasServiceInterface := gen.HasServiceInterface == "on"
-	dataMap["hasServiceInterface"] = hasServiceInterface
 	//生成文件根目录
 	rootDir := "./mybatis_tmpl/"
+	_ = os.RemoveAll(rootDir)
 	for _, tableName := range gen.Tables {
-		columns := g.genDao.GetTableColumnsByTableName(tableName)
+		//模版参数
+		dataMap := map[string]interface{}{}
+		dataMap["gen"] = gen
+		dataMap["date"] = date
+		dataMap["primaryKeyName"] = "id" //主键实体映射统一为：id
+		hasServiceInterface := gen.HasServiceInterface == "on"
+		dataMap["hasServiceInterface"] = hasServiceInterface
 		dataMap["hasDate"] = false
 		dataMap["hasBigDecimal"] = false
+		columns := g.genDao.GetTableColumnsByTableName(tableName)
 		dataMap["columnNumber"] = len(columns)
 		//转换列名与类型
 		for i, col := range columns {
@@ -105,7 +106,8 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 		javaName := tableName
 		//是否生成模块名
 		hasModule := gen.HasModule == "on"
-		var mod string
+		//模块名称
+		mod := ""
 		if hasModule {
 			//解析第一个下划线前的词
 			lineIdx := strutil.IndexRune(tableName, "_")
@@ -130,15 +132,14 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 		dataMap["javaName"] = javaName
 		dataMap["serialVersionUID"] = time.Now().UnixNano()
 		//生成文件
-		modPath := ""
-		if mod != "" {
-			modPath = mod + "/"
+		modPath := "/" + mod
+		if !strings.HasSuffix(modPath, "/") {
+			modPath = modPath + "/"
 		}
-		_ = os.RemoveAll(rootDir)
-		doDir := rootDir + strings.ReplaceAll(gen.DoPkg, ".", "/") + "/" + modPath
-		daoDir := rootDir + strings.ReplaceAll(gen.DaoPkg, ".", "/") + "/" + modPath
-		serviceDir := rootDir + strings.ReplaceAll(gen.ServicePkg, ".", "/") + "/" + modPath
-		serviceImplDir := rootDir + strings.ReplaceAll(gen.ServicePkg, ".", "/") + "/" + modPath + "/impl/"
+		doDir := rootDir + strings.ReplaceAll(gen.DoPkg, ".", "/") + modPath
+		daoDir := rootDir + strings.ReplaceAll(gen.DaoPkg, ".", "/") + modPath
+		serviceDir := rootDir + strings.ReplaceAll(gen.ServicePkg, ".", "/") + modPath
+		serviceImplDir := rootDir + strings.ReplaceAll(gen.ServicePkg, ".", "/") + modPath + "impl/"
 		mapperXmlDir := rootDir + "/mapperXml/" + modPath
 		_ = os.MkdirAll(doDir, os.ModeDir|os.ModePerm)
 		_ = os.MkdirAll(daoDir, os.ModeDir|os.ModePerm)
@@ -147,7 +148,7 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 		if hasServiceInterface {
 			_ = os.MkdirAll(serviceImplDir, os.ModeDir|os.ModePerm)
 		}
-		filePath := "unknown.tmpl"
+		filePath := ""
 		for _, v := range files {
 			if strings.Contains(v, "do.java") {
 				filePath = doDir + javaName + gen.DoSuffix + ".java"
@@ -179,6 +180,7 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 				fmt.Println(err)
 				return "", TEMPLATE_RENDER_ERROR
 			}
+			file.Close()
 		}
 	}
 	//打包zip
