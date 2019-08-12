@@ -45,7 +45,7 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 	setDefaulSuffix(&gen)
 	//模版函数
 	funcMap := getFuncMap()
-	tmplDir := "./resource/ufa/"
+	tmplDir := "./resource/tpl/"
 	files, err := fileutil.GetFileNameList(tmplDir)
 	if err != nil {
 		fmt.Println(err)
