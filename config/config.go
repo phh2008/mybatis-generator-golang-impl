@@ -4,6 +4,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 	"reflect"
 	"sync"
 )
@@ -27,10 +28,14 @@ func init() {
 	Cfg()
 }
 
+
 //获取配置(单例模式)
 func Cfg() *conf {
 	once.Do(func() {
-		filePath := "./resource/conf.yml"
+		filePath, err := filepath.Abs("./resource/conf.yml")
+		if err != nil {
+			panic(err)
+		}
 		yamlFile, err := ioutil.ReadFile(filePath)
 		if err != nil {
 			log.Println(err)

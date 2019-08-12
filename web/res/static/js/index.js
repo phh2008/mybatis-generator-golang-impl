@@ -15,8 +15,14 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
             }
         },
         clazz: function (value, item) {
-            if (!new RegExp("^\\w+(\\.\\w+)*(\\.[a-zA-Z]\\w*)$").test(value)) {
+            if (value !== "" && !new RegExp("^\\w+(\\.\\w+)*(\\.[a-zA-Z]\\w*)$").test(value)) {
                 return '请输入正确的类名';
+            }
+        },
+        serverFace: function (value, item) {
+            let has = $('input[name="hasServiceInterface"]:checked').val();
+            if (has && has === 'on' && value === "") {
+                return "请输入service接口父类"
             }
         }
     });

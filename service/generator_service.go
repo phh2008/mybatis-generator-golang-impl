@@ -58,7 +58,7 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 	}
 	tmpl, err := template.New("mybatisTmpl").Funcs(funcMap).ParseFiles(filePaths...)
 	if err != nil {
-		log.Error().Msg(TEMPLATE_LOAD_ERROR.Error())
+		log.Error().Err(err).Msg(TEMPLATE_LOAD_ERROR.Error())
 		return "", TEMPLATE_LOAD_ERROR
 	}
 	date := dateutil.FormatTime(time.Now(), "yyyy-MM-dd")
@@ -67,12 +67,15 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 	dataMap["gen"] = gen
 	dataMap["date"] = date
 	dataMap["primaryKeyName"] = "id" //主键实体映射统一为：id
+	hasServiceInterface := gen.HasServiceInterface == "on"
+	dataMap["hasServiceInterface"] = hasServiceInterface
 	//生成文件根目录
 	rootDir := "./mybatis_tmpl/"
 	for _, tableName := range gen.Tables {
 		columns := g.genDao.GetTableColumnsByTableName(tableName)
 		dataMap["hasDate"] = false
 		dataMap["hasBigDecimal"] = false
+		dataMap["columnNumber"] = len(columns)
 		//转换列名与类型
 		for i, col := range columns {
 			//mysql类型转换为java类型
@@ -101,7 +104,7 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 		//表名对应java名称：下划线转换为驼峰，首字母大写
 		javaName := tableName
 		//是否生成模块名
-		hasModule := gen.Module == "on"
+		hasModule := gen.HasModule == "on"
 		var mod string
 		if hasModule {
 			//解析第一个下划线前的词
@@ -131,17 +134,19 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 		if mod != "" {
 			modPath = mod + "/"
 		}
+		_ = os.RemoveAll(rootDir)
 		doDir := rootDir + strings.ReplaceAll(gen.DoPkg, ".", "/") + "/" + modPath
 		daoDir := rootDir + strings.ReplaceAll(gen.DaoPkg, ".", "/") + "/" + modPath
 		serviceDir := rootDir + strings.ReplaceAll(gen.ServicePkg, ".", "/") + "/" + modPath
-		serviceImplDir := rootDir + strings.ReplaceAll(gen.ServicePkg, ".", "/") + "/" + modPath + "impl"
+		serviceImplDir := rootDir + strings.ReplaceAll(gen.ServicePkg, ".", "/") + "/" + modPath + "/impl/"
 		mapperXmlDir := rootDir + "/mapperXml/" + modPath
 		_ = os.MkdirAll(doDir, os.ModeDir|os.ModePerm)
 		_ = os.MkdirAll(daoDir, os.ModeDir|os.ModePerm)
 		_ = os.MkdirAll(serviceDir, os.ModeDir|os.ModePerm)
-		_ = os.MkdirAll(serviceImplDir, os.ModeDir|os.ModePerm)
 		_ = os.MkdirAll(mapperXmlDir, os.ModeDir|os.ModePerm)
-
+		if hasServiceInterface {
+			_ = os.MkdirAll(serviceImplDir, os.ModeDir|os.ModePerm)
+		}
 		filePath := "unknown.tmpl"
 		for _, v := range files {
 			if strings.Contains(v, "do.java") {
@@ -149,13 +154,21 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 			} else if strings.Contains(v, "dao.java") {
 				filePath = daoDir + javaName + gen.DaoSuffix + ".java"
 			} else if strings.Contains(v, "service.java") {
+				if hasServiceInterface {
+					//如果有接口，实现在就在impl子目录下
+					filePath = serviceImplDir + javaName + gen.ServiceSuffix + "Impl.java"
+				} else {
+					filePath = serviceDir + javaName + gen.ServiceSuffix + ".java"
+				}
+			} else if strings.Contains(v, "service.interface.java") && hasServiceInterface {
+				//service接口
 				filePath = serviceDir + javaName + gen.ServiceSuffix + ".java"
-			} else if strings.Contains(v, "service.impl.java") {
-				filePath = serviceImplDir + javaName + gen.ServiceSuffix + "Impl.java"
 			} else if strings.Contains(v, "mapper.xml") {
 				filePath = mapperXmlDir + javaName + gen.MapperXmlSuffix + ".xml"
+			} else {
+				//未启用的模版
+				continue
 			}
-			//TODO 未知模版类型
 			file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0777)
 			if err != nil {
 				fmt.Println(err)
@@ -214,6 +227,12 @@ func getFuncMap() template.FuncMap {
 		},
 		"ToLower": func(str string) string {
 			return strings.ToLower(str)
+		},
+		"Add": func(a int, b int) int {
+			return a + b
+		},
+		"Minus": func(a int, b int) int {
+			return a - b
 		},
 	}
 }

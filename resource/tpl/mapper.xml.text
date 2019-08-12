@@ -13,7 +13,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        {{range $i,$v := .columns}} {{$v.Name}},{{end}}
+        {{range $i,$v := .columns}} {{$v.Name}}{{if lt $i (Minus $.columnNumber 1)}},{{end}}{{end}}
     </sql>
 
     <select id="getById" parameterType="java.lang.{{.primaryKeyJavaType}}" resultMap="BaseResultMap">
@@ -34,7 +34,7 @@
             {{- if eq $v.Key `PRI` -}}
                 {{`#{`}}{{$.primaryKeyName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}},
             {{- else -}}
-                {{` #{`}}{{$v.JavaName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}},
+                {{` #{`}}{{$v.JavaName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}}{{if lt $i (Minus $.columnNumber 1)}},{{end}}
             {{- end -}}
         {{- end}})
     </insert>

@@ -58,11 +58,9 @@
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">生成模块名:</label>
-                                <div class="layui-input-inline">
-                                    <input type="checkbox" name="module" lay-skin="switch">
-                                </div>
-                                <div class="layui-inline" style="color: grey;height:35px;line-height: 35px;">
-                                    (表名前辍为模块名)
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="checkbox" name="hasModule" lay-skin="switch" lay-text="on|off">
+                                    提取表名前辍为模块名
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -113,6 +111,22 @@
                                 <div class="layui-input-inline" style="width: 200px;">
                                     <input type="text" lay-verify="required|clazz" name="serviceParentClass"
                                            placeholder="com.phh.service.BaseService"
+                                           autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">service接口:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="checkbox" name="hasServiceInterface" lay-skin="switch" lay-text="on|off">
+                                    是否生成service接口类
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">接口父类:</label>
+                                <div class="layui-input-inline" style="width: 200px;">
+                                    <input type="text" lay-verify="serverFace|clazz" name="serviceInterfaceParentClass"
+                                           placeholder="com.phh.service.IBaseService"
                                            autocomplete="off"
                                            class="layui-input">
                                 </div>

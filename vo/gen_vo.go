@@ -16,13 +16,17 @@ type Gen struct {
 	//do名称后辍
 	DoSuffix string `json:"doSuffix"`
 	//是否生成模块名:on/off
-	Module string `json:"module"`
+	HasModule string `json:"hasModule"`
 	//service父类
 	ServiceParentClass string `json:"serviceParentClass"`
 	//service包名
 	ServicePkg string `json:"servicePkg"`
 	//service名称后辍
 	ServiceSuffix string `json:"serviceSuffix"`
+	//是否生成服务接口
+	HasServiceInterface string `json:"hasServiceInterface"`
+	//service接口父类
+	ServiceInterfaceParentClass string `json:"serviceInterfaceParentClass"`
 	//mapper.xml名称辍
 	MapperXmlSuffix string `json:"mapperXmlSuffix"`
 	//表名

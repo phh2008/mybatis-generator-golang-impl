@@ -1,0 +1,15 @@
+package {{.gen.ServicePkg}}{{if .hasModule}}.{{.mod}}{{end}};
+
+
+import {{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}};
+import {{.gen.ServiceInterfaceParentClass}};
+
+/**
+ * {{.table.Comment}}
+ *
+ * @author {{.gen.Author}}
+ * @date {{.date}}
+ */
+public interface {{.javaName}}Service extends {{.gen.ServiceInterfaceParentClass|ClassName}}<{{.javaName}}{{.gen.DoSuffix}}> {
+
+}
