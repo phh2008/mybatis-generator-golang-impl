@@ -1,7 +1,6 @@
 package {{.gen.ServicePkg}}{{if .hasModule}}.{{.mod}}{{end}};
 
 
-import {{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}};
 import {{.gen.ServiceInterfaceParentClass}};
 
 /**
@@ -10,6 +9,6 @@ import {{.gen.ServiceInterfaceParentClass}};
  * @author {{.gen.Author}}
  * @date {{.date}}
  */
-public interface {{.javaName}}Service extends {{.gen.ServiceInterfaceParentClass|ClassName}}<{{.javaName}}{{.gen.DoSuffix}}> {
+public interface {{.javaName}}{{.gen.ServiceSuffix}} extends {{.gen.ServiceInterfaceParentClass|ClassName}} {
 
 }

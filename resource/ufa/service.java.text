@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import {{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}};
 import {{.gen.DaoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DaoSuffix}};
+{{- if .hasServiceInterface}}{{.gen.ServicePkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.ServiceSuffix}}{{end}}
 import {{.gen.ServiceParentClass}};
 
 /**
@@ -13,6 +14,6 @@ import {{.gen.ServiceParentClass}};
  * @date {{.date}}
  */
 @Service
-public class {{.javaName}}Service{{if .hasServiceInterface}}Impl{{end}} extends {{.gen.ServiceParentClass|ClassName}}<{{.javaName}}{{.gen.DaoSuffix}},{{.javaName}}{{.gen.DoSuffix}}> {
+public class {{.javaName}}{{.gen.ServiceSuffix}}{{if .hasServiceInterface}}Impl{{end}} extends {{.gen.ServiceParentClass|ClassName}}{{if .hasServiceInterface}} implements {{.javaName}}{{.gen.ServiceSuffix}}{{end}} {
 
 }
