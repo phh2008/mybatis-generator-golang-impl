@@ -1,4 +1,4 @@
-[sample](https://github.com/phh2008/mybatis-generator-golang-impl/blob/master/logo/pic.png)
+![sample](https://github.com/phh2008/mybatis-generator-golang-impl/blob/master/logo/pic.png)
 
 + 模版中的变量|函数说明
 + 熟悉golang text/template可自行调整模版，使用已定义的变量
