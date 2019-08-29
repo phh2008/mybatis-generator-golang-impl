@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import {{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}};
 import {{.gen.DaoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DaoSuffix}};
-{{if .hasServiceInterface}}import {{.gen.ServicePkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.ServiceSuffix}}{{end}}
+{{if .hasServiceInterface}}import {{.gen.ServicePkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.ServiceSuffix}}{{end}};
 import {{.gen.ServiceParentClass}};
 
 /**
@@ -15,5 +15,9 @@ import {{.gen.ServiceParentClass}};
  */
 @Service
 public class {{.javaName}}{{.gen.ServiceSuffix}}{{if .hasServiceInterface}}Impl{{end}} extends {{.gen.ServiceParentClass|ClassName}}{{if .hasServiceInterface}} implements {{.javaName}}{{.gen.ServiceSuffix}}{{end}} {
+
+    @QueryPage
+    @Autowired
+    private {{.javaName}}{{.gen.DaoSuffix}} {{.javaName|FirstToLower}}{{.gen.DaoSuffix}};
 
 }
