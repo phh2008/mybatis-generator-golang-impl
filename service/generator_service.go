@@ -81,6 +81,10 @@ func (g *generatorService) Generate(gen vo.Gen) (filePath string, err error) {
 		for i, col := range columns {
 			//mysql类型转换为java类型
 			columns[i].JavaType = mysqlutil.GetJavaType(col.DataType)
+			if col.DataType == "datetime" {
+				//因为jdbcType是没有datetime的.
+				columns[i].DataType = "timestamp"
+			}
 			//mysql字段名称转换为符合java名称
 			javaName := strutil.UnderLineToCamelcase(col.Name)
 			javaName = strutil.FirstLetterToLower(javaName)
