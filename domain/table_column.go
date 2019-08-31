@@ -8,6 +8,7 @@ type Column struct {
 	Extra    string `gorm:"column:EXTRA"`
 	JavaType string `gorm:"-"`
 	JavaName string `gorm:"-"`
+	JdbcType string `gorm:"-"`
 }
 
 func (Column) TableName() string {

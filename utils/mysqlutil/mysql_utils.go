@@ -1,6 +1,9 @@
 package mysqlutil
 
+import "strings"
+
 var mysqlJavaTypeMap map[string]string
+var mysqlJdbcTypeMap map[string]string
 
 func init() {
 	//mysql类型-java类型映射
@@ -31,6 +34,34 @@ func init() {
 	mysqlJavaTypeMap["datetime"] = "Date"
 	mysqlJavaTypeMap["timestamp"] = "Date"
 	//其它统一为字符串
+	//-------------------------------------------------------
+	//mysql类型与jdbcType对应
+	mysqlJdbcTypeMap = map[string]string{}
+	mysqlJdbcTypeMap["bigint"] = "BIGINT"
+	mysqlJdbcTypeMap["decimal"] = "DECIMAL"
+	mysqlJdbcTypeMap["double"] = "DOUBLE"
+	mysqlJdbcTypeMap["float"] = "FLOAT"
+	mysqlJdbcTypeMap["int"] = "INTEGER"
+	mysqlJdbcTypeMap["integer"] = "INTEGER"
+	mysqlJdbcTypeMap["boolean"] = "BIT"
+	mysqlJdbcTypeMap["bit"] = "BIT"
+	mysqlJdbcTypeMap["tinyint"] = "TINYINT"
+	mysqlJdbcTypeMap["smallint"] = "SMALLINT"
+	mysqlJdbcTypeMap["numeric"] = "NUMERIC"
+	mysqlJdbcTypeMap["blob"] = "BLOB"
+	mysqlJdbcTypeMap["char"] = "CHAR"
+	mysqlJdbcTypeMap["clob"] = "CLOB"
+	mysqlJdbcTypeMap["real"] = "REAL"
+	mysqlJdbcTypeMap["date"] = "DATE"
+	mysqlJdbcTypeMap["time"] = "TIME"
+	mysqlJdbcTypeMap["year"] = "VARCHAR"
+	mysqlJdbcTypeMap["timestamp"] = "TIMESTAMP"
+	mysqlJdbcTypeMap["datetime"] = "TIMESTAMP"
+	mysqlJdbcTypeMap["varchar"] = "VARCHAR"
+	mysqlJdbcTypeMap["tinytext"] = "VARCHAR"
+	mysqlJdbcTypeMap["text"] = "VARCHAR"
+	mysqlJdbcTypeMap["mediumtext"] = "LONGTEXT"
+	mysqlJdbcTypeMap["longtext"] = "LONGTEXT"
 }
 
 func GetJavaType(mysqlType string) string {
@@ -39,4 +70,12 @@ func GetJavaType(mysqlType string) string {
 		return "String"
 	}
 	return javaType
+}
+
+func GetJdbcType(mysqlType string) string {
+	jdbcType := mysqlJdbcTypeMap[mysqlType]
+	if jdbcType == "" {
+		return strings.ToUpper(mysqlType)
+	}
+	return jdbcType
 }

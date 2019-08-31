@@ -6,9 +6,9 @@
     <resultMap id="BaseResultMap" type="{{.gen.DoPkg}}{{if .hasModule}}.{{.mod}}{{end}}.{{.javaName}}{{.gen.DoSuffix}}">
        {{- range $i,$v := .columns}}
         {{- if eq $v.Key `PRI`}}
-        <id column="{{$v.Name}}" jdbcType="{{$v.DataType|ToUpper}}" property="{{$.primaryKeyName}}"/>
+        <id column="{{$v.Name}}" jdbcType="{{$v.JdbcType|ToUpper}}" property="{{$.primaryKeyName}}"/>
         {{- else}}
-        <result column="{{$v.Name}}" jdbcType="{{$v.DataType|ToUpper}}" property="{{$v.JavaName}}"/>
+        <result column="{{$v.Name}}" jdbcType="{{$v.JdbcType|ToUpper}}" property="{{$v.JavaName}}"/>
         {{- end -}}
        {{end}}
     </resultMap>
@@ -22,9 +22,9 @@
         VALUES (
         {{- range $i,$v := .columns -}}
             {{- if eq $v.Key `PRI` -}}
-                {{`#{`}}{{$.primaryKeyName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}},
+                {{`#{`}}{{$.primaryKeyName}},jdbcType={{$v.JdbcType|ToUpper}}{{`}`}},
             {{- else -}}
-                {{` #{`}}{{$v.JavaName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}}{{if lt $i (Minus $.columnNumber 1)}},{{end}}
+                {{` #{`}}{{$v.JavaName}},jdbcType={{$v.JdbcType|ToUpper}}{{`}`}}{{if lt $i (Minus $.columnNumber 1)}},{{end}}
             {{- end -}}
         {{- end}})
     </insert>
@@ -39,7 +39,7 @@
           {{- range $i,$v := .columns}}
             {{- if ne $v.Key `PRI`}}
             <if test="{{$v.JavaName}} != null">
-                {{$v.Name}} = {{`#{`}}{{$v.JavaName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}},
+                {{$v.Name}} = {{`#{`}}{{$v.JavaName}},jdbcType={{$v.JdbcType|ToUpper}}{{`}`}},
             </if>
             {{- end -}}
           {{end}}
@@ -63,7 +63,7 @@
         <where>
         {{- range $i,$v := .columns}}
             <if test="{{$v.JavaName}} != null {{if eq $v.JavaType `String`}}and {{$v.JavaName}} != ''{{end}} ">
-                AND {{$v.Name}} = {{`#{`}}{{$v.JavaName}},jdbcType={{$v.DataType|ToUpper}}{{`}`}}
+                AND {{$v.Name}} = {{`#{`}}{{$v.JavaName}},jdbcType={{$v.JdbcType|ToUpper}}{{`}`}}
             </if>
         {{- end}}
         </where>
