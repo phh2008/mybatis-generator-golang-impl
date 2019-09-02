@@ -60,8 +60,8 @@ func init() {
 	mysqlJdbcTypeMap["varchar"] = "VARCHAR"
 	mysqlJdbcTypeMap["tinytext"] = "VARCHAR"
 	mysqlJdbcTypeMap["text"] = "VARCHAR"
-	mysqlJdbcTypeMap["mediumtext"] = "LONGTEXT"
-	mysqlJdbcTypeMap["longtext"] = "LONGTEXT"
+	mysqlJdbcTypeMap["mediumtext"] = "LONGVARCHAR"
+	mysqlJdbcTypeMap["longtext"] = "LONGVARCHAR"
 }
 
 func GetJavaType(mysqlType string) string {
