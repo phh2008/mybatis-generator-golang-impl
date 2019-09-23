@@ -6,6 +6,25 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
     const $ = layui.jquery;
     const ctxPath = $("#ctxPath").val();
 
+    if (typeof String.prototype.startWith != 'function') {
+        String.prototype.startWith = function (prefix) {
+            return this.slice(0, prefix.length) === prefix;
+        };
+    }
+
+    if (typeof String.prototype.startWith != 'function') {
+        String.prototype.startWith = function (suffix) {
+            return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
+    }
+
+    function getFullPath(path) {
+        var root = ctxPath;
+        if (ctxPath.endsWith("/")) {
+            root = ctxPath.substring(0, ctxPath.length - 1);
+        }
+        return root + path;
+    }
 
     form.verify({
         //value：表单的值、item：表单的DOM对象
@@ -46,7 +65,7 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
         layer.msg('加载中', {icon: 16, shade: 0.01});
         $.ajax({
             type: "POST",
-            url: ctxPath + '/connect',
+            url: getFullPath('/connect'),
             contentType: 'application/json',
             data: JSON.stringify(data.field),
             dataType: 'json',
@@ -84,7 +103,7 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
         layer.msg('提交中', {icon: 16, shade: 0.01});
         $.ajax({
             type: "POST",
-            url: ctxPath + '/gen',
+            url: getFullPath('/gen'),
             contentType: 'application/json',
             data: params,
             dataType: 'json',
@@ -92,7 +111,7 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
                 layer.closeAll();
                 if (res.code === "0000") {
                     layer.msg("success");
-                    let url = ctxPath + "/download?file=" + res.data;
+                    let url = getFullPath("/download?file=" + res.data);
                     $('#downFileIframe').attr('src', url);
                 } else {
                     layer.msg(res.msg, {icon: 5, time: 10000});
@@ -110,7 +129,7 @@ layui.use(['form', 'layer', 'table', 'util'], function () {
         elem: '#gen',
         id: 'gen',
         height: 'full-280',
-        url: ctxPath + '/tables',
+        url: getFullPath('/tables'),
         method: 'get',
         limit: 10000,
         loading: true,

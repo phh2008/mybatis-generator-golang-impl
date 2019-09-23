@@ -4,6 +4,7 @@ import (
 	"com.phh/generator/config"
 	"com.phh/generator/dao"
 	"com.phh/generator/service"
+	"com.phh/generator/utils/strutil"
 	"com.phh/generator/web/controller"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/kataras/iris"
@@ -11,6 +12,10 @@ import (
 	"github.com/kataras/iris/middleware/recover"
 	"github.com/kataras/iris/mvc"
 	"github.com/rs/zerolog/log"
+	"os/exec"
+	"runtime"
+	"strings"
+	"time"
 )
 
 func main() {
@@ -23,6 +28,13 @@ func main() {
 	tmpl := iris.HTML("./web/templates", ".html").
 		Layout("shared/layout.html").
 		Reload(true)
+	tmpl.AddFunc("fullPath", func(url string) string {
+		root := cfg.ContextPath
+		if strings.LastIndex(root, "/") == (len(root) - 1) {
+			root = strutil.SubStr2(root, 0, len(root)-1)
+		}
+		return root + url
+	})
 	app.RegisterView(tmpl)
 	//静态资源目录
 	app.StaticWeb(cfg.StaticPath, "./web/res")
@@ -51,6 +63,9 @@ func main() {
 		//controller 处理器注册
 		root.Handle(new(controller.IndexController))
 	}
+	//打开浏览器
+	url := "http://" + cfg.ServerAddress + cfg.ContextPath
+	go openBrowser(url)
 	//启动应用
 	app.Run(
 		// 启动端口
@@ -62,4 +77,22 @@ func main() {
 		iris.WithOptimizations,
 	)
 
+}
+
+func openBrowser(url string) {
+	time.Sleep(time.Second * 2)
+	//当前系统
+	goos := runtime.GOOS
+	var err error
+	if goos == "windows" {
+		cmd := exec.Command("cmd", "/c", "start", url)
+		//cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		err = cmd.Start()
+	} else if goos == "darwin" {
+		//mac系统
+		err = exec.Command("open", url).Start()
+	}
+	if err != nil {
+		log.Warn().Msg("调用浏览器失败，URL:" + url)
+	}
 }
