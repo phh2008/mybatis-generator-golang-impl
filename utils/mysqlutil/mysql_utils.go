@@ -19,7 +19,7 @@ func init() {
 	//小数
 	mysqlJavaTypeMap["float"] = "Float"
 	mysqlJavaTypeMap["double"] = "Double"
-	mysqlJavaTypeMap["decimal"] = "BigDecimal"
+	mysqlJavaTypeMap["decimal"] = "Double"
 	//bool
 	mysqlJavaTypeMap["bit"] = "Boolean"
 	//字符串
